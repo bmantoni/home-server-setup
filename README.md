@@ -3,6 +3,40 @@ This lets me stream 4k UHD BluRay Remuxs (>100 Mbps bit rate) smoothly with no i
 
 We can additionally use this to host `syncthing` to sync files across devices and `tailscale` for secure tunneling.
 
+```mermaid
+flowchart TB
+    subgraph Internet["Internet / Remote"]
+        Remote["Remote Laptop/Desktop"]
+    end
+
+    subgraph Home["Home Network (192.168.1.x)"]
+        Switch["Gigabit 4-Port Switch"]
+        Windows["Windows PC/Laptop"]
+        Router["Router / Gateway<br/>192.168.1.1"]
+    end
+
+    subgraph NAS["UGREEN NAS DXP4800 (Unraid)"]
+        direction TB
+        eth0["eth0: 192.168.1.103<br/>(Management, File Transfers)"]
+        eth1["eth1: 192.168.1.101<br/>(Dedicated Streaming)"]
+        Drives["WD Red Plus 12TB Drives"]
+        Syncthing["Syncthing"]
+        Tailscale["Tailscale VPN"]
+    end
+
+    Shield["NVIDIA Shield<br/>(4K UHD BluRay Remux Streaming)"]
+
+    eth0 -->|SMB/NFS| Windows
+    eth0 -->|Internet Access| Router
+    eth1 -->|Dedicated Stream| Shield
+    Switch --- eth1
+    Drives -.->|Storage| eth0
+    Drives -.->|Storage| eth1
+    Remote -->|Secure Tunnel| Tailscale
+    Syncthing <-->|File Sync| Windows
+    Tailscale -.-> eth0
+```
+
 Hardware
 * UGREEN NAS DXP4800 (2x gigabit NICs)
 * WD Red Plus 12TB Drives
