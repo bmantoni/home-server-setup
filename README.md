@@ -1,4 +1,4 @@
-# 4k UHD Remux-capabel Home "Netflix" with Remote File Syncing (Unraid NAS, NVIDIA Shield Streaming with Dedicated NIC)
+# 4k UHD Remux capable Home "Netflix" Home Server Network (Unraid NAS, NVIDIA Shield Streaming with Dedicated NIC)
 This lets me stream 4k UHD BluRay Remuxs (>100 Mbps bit rate) smoothly with no interference with the rest of the home network.
 
 With 4 docker containers also running on the NAS, downloads from usenet can be fully autmated from a command from my phone and will be renamed and organized into the media library. And some personal files can be synchronized securely to my laptop over the internet via `tailscale` and `synthing`. 
@@ -32,8 +32,8 @@ flowchart TB
 
     eth0 -->|SMB/NFS| Windows
     eth0 -->|Internet Access| Router
-    eth1 -->|Dedicated Stream| Shield
-    Switch --- eth1
+    eth1 -->|Dedicated Stream| Switch
+    Switch --- Shield
     Drives -.->|Storage| eth0
     Drives -.->|Storage| eth1
     Remote -->|Secure Tunnel| Tailscale
