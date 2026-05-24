@@ -1,7 +1,11 @@
-# Unraid UGREEN NAS, NVIDIA Shield Streaming with Dedicated NIC
+# 4k UHD Remux-capabel Home "Netflix" with Remote File Syncing (Unraid NAS, NVIDIA Shield Streaming with Dedicated NIC)
 This lets me stream 4k UHD BluRay Remuxs (>100 Mbps bit rate) smoothly with no interference with the rest of the home network.
 
-We can additionally use this to host `syncthing` to sync files across devices and `tailscale` for secure tunneling.
+With 4 docker containers also running on the NAS, downloads from usenet can be fully autmated from a command from my phone and will be renamed and organized into the media library. And some personal files can be synchronized securely to my laptop over the internet via `tailscale` and `synthing`. 
+
+Via custom networking configs I can dedicate one of the NAS NICs solely to streaming to the home theater, so these super-high bitrate remuxes can play with no lag, while other network traffic happens separately (e.g. downloads and syncing).
+
+Unraid's model is much more flexible than traditional RAID while still offering disk redundancy.
 
 ```mermaid
 flowchart TB
@@ -44,7 +48,7 @@ Hardware
 * Streaming client: NVIDIA Shield
 
 ## Initial NAS/Unraid Setup
-1. A 128GB USB Stick wouldn't work. The Creator corrupted it. I had to use a 32GB
+1. A 128GB USB Stick wouldn't work. The Unraid Creator corrupted it. I had to use a 32GB
 2. Update BIOS to disable Watchdog and set USB as only boot device (block UGREEN OS)
 3. Setup 2-disk Array. You have to choose "3" as it's the minimum but leave one empty (for now)
 4. Run initial Parity
@@ -55,7 +59,7 @@ Without these steps the drives were running up to 50C during parity check
 1. Install Community Apps
 2. Install `IT87` Drivers App/Plugin (required to access the Fan PWM Controllers)
 3. Install `FanCtrl Plus` App
-4. Create fan control profiles/curves for each PWM controller, making sure to use the drive temps for pwm controller 3 (rear fan in my case)
+4. Create fan control profiles/curves for each PWM controller, making sure to use the drive temps for pwm controller 3 (rear fan in my case). Use their fan start test to identify fans.
 
 ## Networking - Basics
 1. Configure eth0
@@ -78,7 +82,7 @@ Apply run it (except the last statement) directly via ssh first to test.
 ## Import (large volumes of) existing data via locally attached external drives 
 
 ### Install tmux
-Install the tmux App (Tmux Terminal Manager (TTM)). This is useful for copying large files from locally attached devices via ssh without worrying about that session being disconnected and stopping the transfer.
+Install the tmux App (Tmux Terminal Manager (TTM)). This is useful for copying large files from locally attached devices via ssh (connecting from another machine) without worrying about that session being disconnected and stopping the transfer.
 
 ### Importing old data
 1. Connect existing drive via USB
@@ -103,9 +107,16 @@ Make sure to access shares (to copy files) via the non-streaming IP (.103)
 * Setup SMB Shares (to access from Windows)
 
 * Setup NFS Shares (to access from Shield)
+
+## Configure Shield client
+I use `Kodi` as a client. It has as nice UI for your movie catalog and can handle the huge remuxes better than Plex.
+
+Configure your libraries, pointing them via NFS to the NAS on `eth1`. NFS will perform better than SMB.
   * Note the path I access them from the Shield was a little confusing
 
 ## Setup file syncing
+I use this for synchronizing Ableton projects from my home PC to my laptop.
+
 On Unraid Server (make sure Docker service is enabled)
 1. Setup a new file share for `ableton-projects` 
 2. Under Apps, install `binhex-syncthing`
